@@ -97,21 +97,23 @@ fn attributes(config: &Config, path: &str) -> Vec<KeyValue> {
 }
 
 /// If the configuration contains the field `log-level`, which can have the values defined in the
-/// [log](https://docs.rs/log/latest/log/) crate, then the logger is set up to send logs to both the
-/// [SimpleLogger](https://docs.rs/simple_logger/latest/simple_logger/struct.SimpleLogger.html) and
-/// the OpenTelemetry log provider.
+/// [log](https://docs.rs/log/latest/log/) crate, then the logger is set up with this level. The
+/// default level is `info`. If the OpenTelemetry log provider is present, then the logs are sent
+/// to both [SimpleLogger](https://docs.rs/simple_logger/latest/simple_logger/struct.SimpleLogger.html)
+/// and the OpenTelemetry log provider.
 pub fn logging(config: &Config, logger_provider: Option<&SdkLoggerProvider>) -> Result<(), Error> {
-    let simple = match config
+    let level = config
         .get_string("log-level")
         .ok()
-        .map(|l| LevelFilter::from_str(&l))
-    {
-        Some(l) => SimpleLogger::new().with_level(l?),
-        None => SimpleLogger::new().env(),
-    };
+        .and_then(|l| LevelFilter::from_str(&l).ok())
+        .unwrap_or(LevelFilter::Info);
+    let simple = SimpleLogger::new().with_level(level);
 
     match logger_provider.map(|p| Box::new(OpenTelemetryLogBridge::new(p))) {
-        Some(l) => MultiLogger::init(vec![Box::new(simple), l], Level::Debug)?,
+        Some(l) => MultiLogger::init(
+            vec![Box::new(simple), l],
+            level.to_level().unwrap_or(Level::Info),
+        )?,
         None => simple.init()?,
     };
     Ok(())
