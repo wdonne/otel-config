@@ -29,7 +29,7 @@ impl Providers {
     /// the OpenTelemetry resource. Attributes can be added to the resource with the `attributes`
     /// subfield, which is an object. In the following configuration example, the `otel` field
     /// would be the value of the `path` argument.
-    /// ```
+    /// ```yaml
     /// otel:
     ///   endpoint: "http://my-collector:4317"
     ///   name: my-app

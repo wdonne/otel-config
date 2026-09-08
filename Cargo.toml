@@ -8,11 +8,11 @@ license = "BSD-2-Clause"
 name = "otel-config"
 readme = "README.md"
 repository = "https://github.com/wdonne/otel-config"
-version = "1.0.1"
+version = "1.0.2"
 
 [dependencies]
 config = "0.15.25"
-log = "0.4.33"
+log = "0.4.34"
 multi_log = "0.1.2"
 opentelemetry = "0.32.0"
 opentelemetry-appender-log = "0.32.0"
@@ -24,4 +24,4 @@ opentelemetry-otlp = { version = "0.32.0", features = [
 ] }
 opentelemetry_sdk = "0.32.1"
 simple_logger = "5.2.0"
-thiserror = "2.0.19"
+thiserror = "2.0.20"
